@@ -104,7 +104,7 @@ public class TestController {
 
 	    if (fileName != null) {
 	        //设置文件路径
-	        String realPath = "E:\\workspace\\ws2\\src\\main\\webapp\\upload";
+	        String realPath = request.getSession().getServletContext().getRealPath("/upload/");
 	        File file = new File(realPath , fileName);
 	        if (file.exists()) {
 	            response.setContentType("application/force-download");// 设置强制下载不打开
