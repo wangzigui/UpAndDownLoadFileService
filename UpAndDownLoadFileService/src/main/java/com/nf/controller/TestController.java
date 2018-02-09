@@ -8,6 +8,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,8 +26,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.nf.dao.TestDao;
 import com.nf.domain.CreateMsgReq;
+import com.nf.domain.UserInfo;
 import com.nf.entity.AssetQuota;
+import com.nf.entity.Result;
+import com.nf.util.ResultUtil;
+import com.nf.util.TokenService;
 
+import io.jsonwebtoken.Claims;
 import net.sf.json.JSONObject;
 
 @RestController
@@ -36,7 +45,9 @@ public class TestController {
 	private TestDao testDao;
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public AssetQuota createMsg(@RequestBody String requestJson) {
+	public AssetQuota createMsg(@RequestBody String requestJson,HttpServletRequest request) {
+ 		Claims claims = (Claims) request.getAttribute("claims");
+		System.out.println(claims.toString());
 		JSONObject json = JSONObject.fromObject(requestJson);
 		String id = json.getString("id");
 
@@ -144,4 +155,48 @@ public class TestController {
 	    }
 	    return null;
 	}
+	public static final List<UserInfo> userlist= new ArrayList<>();
+	public static final Map<String, UserInfo> map = new HashMap<>();
+	static
+	{
+		UserInfo user= new UserInfo();
+		user.setId("1234");
+		user.setName("wang");
+		user.setPwd("1234");
+		UserInfo user1= new UserInfo();
+		user1.setId("12345");
+		user1.setName("wang1");
+		user1.setPwd("12345");
+		map.put(user.getName(), user);
+		map.put(user1.getName(), user1);
+
+	}
+	
+	/**
+	 * 获取token
+	 * @Title: login 
+	 * @Description: TODO(这里用一句话描述这个方法的作用) 
+	 * @param @param userInfo
+	 * @param @return    
+	 * @return Result    返回类型 
+	 * @time 2018年2月9日 下午2:33:59
+	 * @throws
+	 */
+	@RequestMapping(value = "/login", method=RequestMethod.POST)
+	public Result login(@RequestBody UserInfo userInfo)
+	{
+		
+		if(!map.containsKey(userInfo.getName()))
+		{
+			return ResultUtil.error(403, "error");
+		}
+		
+		TokenService tokenService = new TokenService();
+		
+		return ResultUtil.success(tokenService.createJWT("wang", "ww", "wang", 500000));
+	}
+	
+	
+	
+	
 }

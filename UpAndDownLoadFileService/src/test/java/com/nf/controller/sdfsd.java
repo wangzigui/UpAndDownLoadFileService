@@ -51,7 +51,7 @@ public class sdfsd {
 	   when(testDao.getMsgById(Mockito.anyString())).thenReturn(actul);
 //	   testDao.createMsg(Mockito.any()).doNothing();
 	   doNothing().when(testDao).createMsg(Mockito.any());
-	   AssetQuota  name =personService.createMsg("{\"id\":\"1\"}");
+	   AssetQuota  name =personService.createMsg("{\"id\":\"1\"}",null);
 	   
 	   System.out.println(name);
 	   byte[] bytes = new byte[4];
